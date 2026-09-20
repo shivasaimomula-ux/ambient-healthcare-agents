@@ -175,7 +175,13 @@ def create_app(
         allow_origins=settings.cors_allow_origins,
         allow_credentials=False,
         allow_methods=["GET", "POST"],
-        allow_headers=["Content-Type", "X-Admin-Token", "X-Internal-Token", "X-Session-Id"],
+        allow_headers=[
+            "Content-Type",
+            "X-Admin-Token",
+            "X-Internal-Token",
+            "X-Chat-Token",
+            "X-Session-Id",
+        ],
     )
 
     def service(request: Request) -> IntakeService:
@@ -184,6 +190,14 @@ def create_app(
     def require_admin(x_admin_token: str | None = Header(default=None)) -> None:
         if not settings.admin_api_token or x_admin_token != settings.admin_api_token:
             raise HTTPException(status_code=403, detail="admin token required")
+
+    def require_chat_bootstrap(x_chat_token: str | None = Header(default=None)) -> None:
+        """Prod profile: reject unauthenticated public chat. Localhost demo (ENV=dev) skips this."""
+        if not settings.requires_chat_auth():
+            return
+        expected = settings.chat_bootstrap_token
+        if not expected or x_chat_token != expected:
+            raise HTTPException(status_code=401, detail="chat bootstrap token required")
 
     def valid_thread(thread_id: str) -> str:
         if not SESSION_ID_RE.match(thread_id):
@@ -219,7 +233,7 @@ def create_app(
     async def contract() -> dict:
         return build_schema()
 
-    @app.post("/v1/chat", response_model=ChatResponse)
+    @app.post("/v1/chat", response_model=ChatResponse, dependencies=[Depends(require_chat_bootstrap)])
     async def chat(
         body: ChatRequest, request: Request, svc: IntakeService = Depends(service)
     ) -> ChatResponse:

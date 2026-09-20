@@ -303,7 +303,7 @@ dev = [
 
 [[package]]
 name = "herbenzo-contracts"
-version = "0.1.1"
+version = "0.1.2"
 source = { editable = "/Users/shivasaimomula/Desktop/herbenzo-contracts" }
 dependencies = [
     { name = "pydantic" },

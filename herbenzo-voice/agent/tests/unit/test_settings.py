@@ -9,6 +9,8 @@ def test_defaults_use_current_nvidia_model():
     assert s.min_adult_age == 18
     assert s.pipeline_mode is True
     assert s.recommender_url == "http://localhost:8000"
+    assert s.requires_chat_auth() is False
+    assert s.chat_bootstrap_token is None
 
 
 def test_require_reports_missing_names():

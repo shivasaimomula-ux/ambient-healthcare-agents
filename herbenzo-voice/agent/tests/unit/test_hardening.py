@@ -66,6 +66,7 @@ def prod(**kw) -> Settings:
         env="prod",
         internal_api_token="i" * 32,
         admin_api_token="a" * 32,
+        chat_bootstrap_token="c" * 32,
         nvidia_api_key="nvapi-x",
         cors_allow_origins=["https://intake.herbenzo.com"],
         guardrails_enabled=True,
@@ -83,6 +84,8 @@ def test_production_config_accepted():
     [
         ({"admin_api_token": "short"}, "ADMIN_API_TOKEN"),
         ({"internal_api_token": None}, "INTERNAL_API_TOKEN"),
+        ({"chat_bootstrap_token": None}, "CHAT_BOOTSTRAP_TOKEN"),
+        ({"chat_bootstrap_token": "short"}, "CHAT_BOOTSTRAP_TOKEN"),
         ({"cors_allow_origins": ["*"]}, "CORS_ALLOW_ORIGINS"),
         ({"cors_allow_origins": ["http://localhost:4400"]}, "CORS_ALLOW_ORIGINS"),
         ({"guardrails_enabled": False}, "GUARDRAILS_ENABLED"),
@@ -97,6 +100,44 @@ def test_unsafe_production_config_refuses_to_start(override, expected):
 def test_dev_only_warns():
     warnings = Settings(_env_file=None, env="dev").validate_for_startup()
     assert any("INTERNAL_API_TOKEN" in w for w in warnings)
+    assert any("localhost demo" in w for w in warnings)
+
+
+# --- chat bootstrap auth (Audit #7 / T17) --------------------------------------------------------
+
+
+def test_requires_chat_auth_auto_from_env():
+    assert Settings(_env_file=None, env="dev").requires_chat_auth() is False
+    assert Settings(_env_file=None, env="prod", chat_bootstrap_token="c" * 32).requires_chat_auth() is True
+
+
+def test_chat_auth_required_override():
+    assert Settings(_env_file=None, env="dev", chat_auth_required=True).requires_chat_auth() is True
+    assert (
+        Settings(_env_file=None, env="prod", chat_auth_required=False, chat_bootstrap_token="c" * 32).requires_chat_auth()
+        is False
+    )
+
+
+def test_chat_rejects_without_token_when_auth_required(tmp_path):
+    s = settings(tmp_path, chat_auth_required=True, chat_bootstrap_token="bootstrap-secret-token-ok")
+    with TestClient(create_app(s, fake_deps)) as client:
+        denied = client.post("/v1/chat", json={})
+        assert denied.status_code == 401
+        assert "chat bootstrap token" in denied.json()["detail"]
+        wrong = client.post("/v1/chat", json={}, headers={"X-Chat-Token": "nope"})
+        assert wrong.status_code == 401
+        ok = client.post("/v1/chat", json={}, headers={"X-Chat-Token": "bootstrap-secret-token-ok"})
+        assert ok.status_code == 200
+        assert ok.json()["session_id"]
+
+
+def test_chat_open_on_localhost_demo_profile(tmp_path):
+    """ENV=dev keeps /v1/chat open (rate limits only) for the documented demo profile."""
+    s = settings(tmp_path, env="dev")
+    assert s.requires_chat_auth() is False
+    with TestClient(create_app(s, fake_deps)) as client:
+        assert client.post("/v1/chat", json={}).status_code == 200
 
 
 # --- rate limiting -------------------------------------------------------------------------------

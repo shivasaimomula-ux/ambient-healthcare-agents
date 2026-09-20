@@ -61,6 +61,19 @@ That returns the greeting and a `session_id`. Send each answer with it:
 curl -s -X POST localhost:8081/v1/chat -H 'Content-Type: application/json' -d '{"session_id":"<id>","message":"yes"}'
 ```
 
+**Profiles:** `ENV=dev` (default) is the **localhost demo** — `/v1/chat` stays open behind rate
+limits (no token). **Prod profile** (`ENV=prod`, typically with `PIPELINE_MODE=true`) requires
+`CHAT_BOOTSTRAP_TOKEN` and header `X-Chat-Token` on every chat turn; startup refuses a weak/missing
+token. Override with `CHAT_AUTH_REQUIRED=true|false`.
+
+```bash
+# Prod / pipeline caller
+curl -s -X POST localhost:8081/v1/chat \
+  -H 'Content-Type: application/json' \
+  -H "X-Chat-Token: $CHAT_BOOTSTRAP_TOKEN" \
+  -d '{}'
+```
+
 With `RECOMMENDER_URL` pointing at a running Stage A (`uvicorn predictor.api:app --port 8000`),
 every eligible intake is delivered in the background as
 `POST {RECOMMENDER_URL}/predict` with `query` plus rich `context` (`symptom_spec`, `safety`,
@@ -101,7 +114,8 @@ refuses updates and deletes on them.
 ### Security checklist before a pilot
 
 - [ ] `ENV=prod` (refuses to start with weak tokens, `*`/http CORS, guardrails off, or `LOG_CONTENT=true`)
-- [ ] `INTERNAL_API_TOKEN` and `ADMIN_API_TOKEN` are fresh 32-character random values, not in git
+- [ ] `INTERNAL_API_TOKEN`, `ADMIN_API_TOKEN`, and `CHAT_BOOTSTRAP_TOKEN` are fresh 32-character random values, not in git
+- [ ] Callers send `X-Chat-Token` on `POST /v1/chat` (prod profile); localhost demo keeps `ENV=dev` without a token
 - [ ] Only `/`, `/api/v1/chat` and `/api/health` are exposed publicly (see `voice/ui/Caddyfile`); `/generate`,
       `/v1/sessions/*` and `/metrics` stay on the internal network
 - [ ] HTTPS in front (Caddy) — browsers need a secure origin for the microphone

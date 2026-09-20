@@ -19,6 +19,7 @@ services:
       <<: *secrets
       ENV: ${ENV:-dev}
       ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:?set ADMIN_API_TOKEN in .env}
+      CHAT_BOOTSTRAP_TOKEN: ${CHAT_BOOTSTRAP_TOKEN:-}
       DATABASE_URL: sqlite:////data/herbenzo_voice.db
       RECOMMENDER_URL: ${RECOMMENDER_URL:-http://host.docker.internal:8000}
       HANDOFF_ENABLED: ${HANDOFF_ENABLED:-true}

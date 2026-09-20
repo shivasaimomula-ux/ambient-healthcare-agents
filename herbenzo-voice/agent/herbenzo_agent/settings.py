@@ -74,6 +74,11 @@ class Settings(BaseSettings):
     # Service security
     internal_api_token: str | None = None
     admin_api_token: str | None = None
+    # Shared secret for POST /v1/chat when chat auth is required (ENV=prod / prod profile).
+    # Localhost demo (ENV=dev) leaves this unset and keeps /v1/chat open behind rate limits.
+    chat_bootstrap_token: str | None = None
+    # None = auto (required when ENV=prod). Set true/false to override.
+    chat_auth_required: bool | None = None
     cors_allow_origins: list[str] = Field(default_factory=lambda: ["https://localhost"])
 
     # Handoff to Stage A
@@ -83,6 +88,16 @@ class Settings(BaseSettings):
     handoff_min_confidence: float = 0.5
     # When true (default), /ready requires Stage A at RECOMMENDER_URL. Set false for intake-only.
     pipeline_mode: bool = True
+
+    def requires_chat_auth(self) -> bool:
+        """Prod profile (ENV=prod) requires a bootstrap token on /v1/chat; localhost demo does not.
+
+        Explicit CHAT_AUTH_REQUIRED overrides the auto rule. PIPELINE_MODE alone does not —
+        local pipeline demos keep ENV=dev with open chat + rate limits.
+        """
+        if self.chat_auth_required is not None:
+            return self.chat_auth_required
+        return self.env == "prod"
 
     # Intake policy
     min_adult_age: int = 18
@@ -132,6 +147,13 @@ class Settings(BaseSettings):
                 problems.append("NVIDIA_API_KEY is required unless self-hosted base URLs are configured")
             if not self.guardrails_enabled:
                 problems.append("GUARDRAILS_ENABLED must be true in production")
+            if self.requires_chat_auth() and (
+                not self.chat_bootstrap_token or len(self.chat_bootstrap_token) < 24
+            ):
+                problems.append(
+                    "CHAT_BOOTSTRAP_TOKEN must be set to a random value of at least 24 characters "
+                    "when chat auth is required (ENV=prod)"
+                )
         if problems and self.env == "prod":
             raise MissingConfigError("Unsafe production configuration: " + "; ".join(problems))
         warnings = []
@@ -139,6 +161,13 @@ class Settings(BaseSettings):
             warnings.append("INTERNAL_API_TOKEN not set: the voice endpoint /generate is disabled")
         if not self.admin_api_token:
             warnings.append("ADMIN_API_TOKEN not set: review and audit endpoints are disabled")
+        if self.requires_chat_auth() and not self.chat_bootstrap_token:
+            warnings.append("CHAT_BOOTSTRAP_TOKEN not set: POST /v1/chat will reject all callers")
+        elif not self.requires_chat_auth():
+            warnings.append(
+                "chat auth off (localhost demo profile): POST /v1/chat is open behind rate limits; "
+                "set ENV=prod or CHAT_AUTH_REQUIRED=true for the prod profile"
+            )
         return warnings
 
 
