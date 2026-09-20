@@ -256,6 +256,7 @@ dependencies = [
     { name = "aiosqlite" },
     { name = "bleach" },
     { name = "fastapi" },
+    { name = "herbenzo-contracts" },
     { name = "httpx" },
     { name = "langchain-core" },
     { name = "langchain-nvidia-ai-endpoints" },
@@ -280,6 +281,7 @@ requires-dist = [
     { name = "aiosqlite", specifier = ">=0.22.1" },
     { name = "bleach", specifier = ">=6.4.0" },
     { name = "fastapi", specifier = ">=0.141.1" },
+    { name = "herbenzo-contracts", editable = "/Users/shivasaimomula/Desktop/herbenzo-contracts" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "langchain-core", specifier = ">=1.6.3" },
     { name = "langchain-nvidia-ai-endpoints", specifier = ">=1.4.3" },
@@ -298,6 +300,21 @@ dev = [
     { name = "respx", specifier = ">=0.23.1" },
     { name = "ruff", specifier = ">=0.16.7" },
 ]
+
+[[package]]
+name = "herbenzo-contracts"
+version = "0.1.1"
+source = { editable = "/Users/shivasaimomula/Desktop/herbenzo-contracts" }
+dependencies = [
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pydantic", specifier = ">=2.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
+]
+provides-extras = ["dev"]
 
 [[package]]
 name = "httpcore"

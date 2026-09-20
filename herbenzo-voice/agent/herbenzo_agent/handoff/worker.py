@@ -16,6 +16,7 @@ import httpx
 
 from herbenzo_agent.contracts.symptom_spec import SymptomSpec
 from herbenzo_agent.handoff.recommender_adapter import to_predict_request
+from herbenzo_agent.handoff.contract_gate import validate_predict_request
 from herbenzo_agent.persistence.store import SqliteStore
 
 logger = logging.getLogger(__name__)
@@ -57,7 +58,20 @@ class RecommenderHandoff:
         if not eligible:
             await self.store.create_handoff(spec, TARGET, "not_eligible", reason=reason)
             return "not_eligible"
-        await self.store.create_handoff(spec, TARGET, "queued", request=to_predict_request(spec))
+        request = to_predict_request(spec)
+        try:
+            validate_predict_request(request)
+        except Exception as exc:  # noqa: BLE001 — contract gate: fail closed
+            logger.error("handoff %s blocked by contract gate: %s", spec.spec_id, exc)
+            await self.store.create_handoff(
+                spec,
+                TARGET,
+                "failed",
+                reason=f"contract_validation: {exc}",
+                request=request,
+            )
+            return "failed"
+        await self.store.create_handoff(spec, TARGET, "queued", request=request)
         self._spawn(str(spec.spec_id))
         return "queued"
 
