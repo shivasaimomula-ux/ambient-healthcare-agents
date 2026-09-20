@@ -5,7 +5,9 @@ the database, whether the configured LLMs still exist on the provider (NVIDIA re
 fixed dates), whether the guardrail config loaded, and whether Stage A is reachable.
 
 In `PIPELINE_MODE=true` (default), Stage A reachability is required for ready — a down Recommender
-must not look “ready” for the F→A pipeline. Set `PIPELINE_MODE=false` for intake-only soft-fail.
+must not look “ready” for the F→A pipeline. Input guardrails also fail closed on NemoGuard
+`unavailable` (see `guardrails_fail_closed`). Set `PIPELINE_MODE=false` for intake-only soft-fail
+(and fail-open on unavailable rails when ENV≠prod).
 """
 
 from __future__ import annotations
