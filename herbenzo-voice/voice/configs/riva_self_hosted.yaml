@@ -1,0 +1,22 @@
+# Riva speech on self-hosted NIMs (docker compose profile riva-nims-local). GPU host required.
+Pipeline:
+  filler_words: ["One moment."]
+  filler_probability: 0.0
+
+Agent:
+  max_tokens: 1024
+  request_timeout_s: 45
+
+RivaASRService:
+  server: "riva-asr-parakeet:50052"
+  language: "en-US"
+  sample_rate: 16000
+  model: "parakeet-1.1b-en-US-asr-streaming-silero-vad-sortformer"
+  model_label: "parakeet-1.1b-en-US-asr-streaming (self-hosted)"
+
+RivaTTSService:
+  server: "riva-tts-magpie:50051"
+  language: "en-US"
+  voice_id: "Magpie-Multilingual.EN-US.Mia"
+  model: "magpie_tts_ensemble-Magpie-Multilingual"
+  model_label: "magpie-tts-multilingual (self-hosted)"

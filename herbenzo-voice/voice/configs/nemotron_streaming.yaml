@@ -1,0 +1,39 @@
+# Low-latency ASR variant: cache-aware streaming NIM (nemotron-asr-streaming) on hosted NVCF.
+# Everything except the ASR block is identical to riva_public.yaml so this is a clean A/B:
+#   VOICE_CONFIG_PATH=configs/nemotron_streaming.yaml uv run python pipeline_herbenzo.py --port 7860
+#
+# function id below is from the model's Try API page on build.nvidia.com
+# (nvidia/nemotron-asr-streaming). The NVIDIA_API_KEY in .env supplies auth; no key is stored here.
+Pipeline:
+  filler_words: ["One moment."]
+  filler_probability: 0.5
+
+Agent:
+  max_tokens: 96
+  request_timeout_s: 45
+
+RivaASRService:
+  server: "grpc.nvcf.nvidia.com:443"
+  language: "en-US"
+  sample_rate: 16000
+  # hosted function id for nvidia/nemotron-asr-streaming (build.nvidia.com > Try API).
+  # On hosted NVCF the function-id selects the model, so `model` is left unset (matching the
+  # working Parakeet config and NVIDIA's own Try-API snippet, which passes no --model).
+  function_id: "bb0837de-8c7b-481f-9ec8-ef5663e9c1fa"
+  model_label: "nvidia/nemotron-asr-streaming (NVCF)"
+  # Two-Pass EOU: fire a speculative transcript early (stop_history_eou) so the LLM starts
+  # sooner, then confirm with the verified pass (stop_history). Lower = snappier, but too low
+  # clips slow talkers. 160/500 is a reasonable first cut; tune from live runs.
+  stop_history: 500
+  stop_history_eou: 160
+  # Cache-aware streaming VAD + partial ITN. NOTE: the runtime operating-point / chunk-size
+  # key (80/160/560 ms) for this NIM is set here once confirmed against the model's NIM docs;
+  # start at the library default below and add the chunk key when verified.
+  custom_configuration: "enable_vad_endpointing:true,neural_vad.onset:0.65,apply_partial_itn:true"
+
+RivaTTSService:
+  server: "grpc.nvcf.nvidia.com:443"
+  language: "en-US"
+  voice_id: "Magpie-Multilingual.EN-US.Mia"
+  function_id: "877104f7-e885-42b9-8de8-f6e4c6303969"
+  model_label: "nvidia/magpie-tts-multilingual (NVCF)"

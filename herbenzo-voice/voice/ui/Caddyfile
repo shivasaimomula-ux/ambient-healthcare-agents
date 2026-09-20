@@ -1,0 +1,39 @@
+# HTTPS front door. Browsers only allow microphone access on secure origins.
+# SITE_ADDRESS: "localhost" for development (Caddy's internal CA), or the public domain in production.
+{$SITE_ADDRESS:localhost} {
+	{$CADDY_TLS:tls internal}
+
+	encode gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		Permissions-Policy "microphone=(self), camera=()"
+	}
+
+	# Voice controller: WebRTC signalling websocket and prompt poll.
+	handle_path /voice/* {
+		reverse_proxy voice:7860
+	}
+
+	# Only the public chat and health endpoints of the agent are exposed. /generate, /v1/sessions/*/close and all
+	# admin/review endpoints stay on the internal network.
+	handle /api/v1/chat {
+		uri strip_prefix /api
+		reverse_proxy agent:8081
+	}
+	handle /api/health {
+		uri strip_prefix /api
+		reverse_proxy agent:8081
+	}
+	handle /api/* {
+		respond 404
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

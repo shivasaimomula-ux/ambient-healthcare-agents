@@ -88,3 +88,13 @@ docker-compose.override.yml
 Thumbs.db
 .DS_Store
 
+
+# Herbenzo: never commit secrets or local data
+.env.rtf
+*.rtf
+untitled folder/
+herbenzo-voice/**/data/
+*.db
+*.db-journal
+herbenzo-voice/voice/ui/.build/
+herbenzo-voice/voice/audio_dumps/

@@ -1,0 +1,73 @@
+{
+  "spec_version": "1.0.0",
+  "spec_id": "5b0f6c1e-8c3f-4f6e-9a55-2f0d1f1a9c01",
+  "session_id": "sess-fixture-complete",
+  "status": "complete",
+  "status_reason": null,
+  "created_at": "2026-09-16T10:00:00Z",
+  "channel": "voice",
+  "language": "en-IN",
+  "jurisdiction": "IN",
+  "reporter_role": "self",
+  "consent": {
+    "granted": true,
+    "consent_text_version": "consent-en-2026-09-v1",
+    "granted_at": "2026-09-16T09:58:10Z",
+    "turn_id": "sess-fixture-complete:1"
+  },
+  "red_flag_screen": {"screened_every_turn": true, "flags": [], "outcome": "clear"},
+  "subject": {
+    "age_years": {"value": 34, "confidence": 0.95, "capture": "confirmed", "turn_ids": ["sess-fixture-complete:5"]},
+    "sex_at_birth": {"value": "male", "confidence": 0.95, "capture": "confirmed", "turn_ids": ["sess-fixture-complete:6"]},
+    "pregnancy_status": null
+  },
+  "chief_complaint": {
+    "verbatim": "I've got this burning acidity, it gets worse after spicy food",
+    "summary": {"value": "burning acidity", "confidence": 0.95, "capture": "confirmed", "turn_ids": ["sess-fixture-complete:3"]},
+    "body_system": {"value": "digestive", "confidence": 0.95, "capture": "confirmed", "turn_ids": ["sess-fixture-complete:3"]}
+  },
+  "symptoms": [
+    {
+      "name": {"value": "burning acidity", "confidence": 0.95, "capture": "confirmed", "turn_ids": ["sess-fixture-complete:3"]},
+      "duration": {
+        "value": {"value": 3, "unit": "weeks", "raw_text": "about three weeks"},
+        "confidence": 0.95, "capture": "confirmed", "turn_ids": ["sess-fixture-complete:4"]
+      },
+      "severity_0_10": {"value": 6, "confidence": 0.8, "capture": "stated", "turn_ids": ["sess-fixture-complete:4"]},
+      "frequency_pattern": {"value": "after meals", "confidence": 0.8, "capture": "stated", "turn_ids": ["sess-fixture-complete:3"]},
+      "location": null,
+      "character": {"value": "burning", "confidence": 0.8, "capture": "stated", "turn_ids": ["sess-fixture-complete:3"]},
+      "aggravating_factors": {"value": ["spicy food"], "confidence": 0.8, "capture": "stated", "turn_ids": ["sess-fixture-complete:3"]},
+      "relieving_factors": null,
+      "associated_symptoms": null
+    }
+  ],
+  "safety_profile": {
+    "current_medications": {
+      "value": [{"name": "pantoprazole", "dose_text": "40 mg once daily", "kind": "prescription"}],
+      "confidence": 0.95, "capture": "confirmed", "turn_ids": ["sess-fixture-complete:7"]
+    },
+    "allergies": {"value": [], "confidence": 0.95, "capture": "confirmed", "turn_ids": ["sess-fixture-complete:8"]},
+    "chronic_conditions": {"value": [], "confidence": 0.95, "capture": "confirmed", "turn_ids": ["sess-fixture-complete:9"]},
+    "recent_or_planned_surgery": null
+  },
+  "ayurvedic_context": {
+    "appetite": null,
+    "digestion": null,
+    "bowel_pattern": null,
+    "sleep_quality": null,
+    "stress_level": {"value": "high at work", "confidence": 0.8, "capture": "stated", "turn_ids": ["sess-fixture-complete:10"]},
+    "diet_type": {"value": "vegetarian", "confidence": 0.8, "capture": "stated", "turn_ids": ["sess-fixture-complete:11"]}
+  },
+  "confidence_floor": 0.95,
+  "provenance": {
+    "agent_version": "0.1.0",
+    "graph_version": "fixture",
+    "llm_models": {"extractor": "nvidia/nemotron-3.5-lightning-30b-a3b", "responder": "nvidia/nemotron-3.5-lightning-30b-a3b"},
+    "prompt_sha256": {"extractor_system": "fixture", "responder_system": "fixture", "scripts": "fixture"},
+    "guardrails_config_sha256": "fixture",
+    "asr_model": "parakeet-ctc-1.1b-en-US",
+    "tts_model": "magpie-tts-multilingual",
+    "transcript_ref": "turns:sess-fixture-complete"
+  }
+}
