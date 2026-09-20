@@ -87,6 +87,7 @@ class Settings(BaseSettings):
     handoff_enabled: bool = True
     handoff_min_confidence: float = 0.5
     # When true (default), /ready requires Stage A at RECOMMENDER_URL. Set false for intake-only.
+    # Also: unavailable NemoGuard input rails fail closed (block) when true; see guardrails_fail_closed().
     pipeline_mode: bool = True
 
     def requires_chat_auth(self) -> bool:
@@ -98,6 +99,15 @@ class Settings(BaseSettings):
         if self.chat_auth_required is not None:
             return self.chat_auth_required
         return self.env == "prod"
+
+    def guardrails_fail_closed(self) -> bool:
+        """Whether unavailable NemoGuard / content-safety must block input (not allow).
+
+        Pipeline mode (default) and ENV=prod fail closed. Intake-only demo
+        (`PIPELINE_MODE=false` with ENV≠prod) keeps the historical fail-open path so
+        local chat still works when the hosted NIM is flaky.
+        """
+        return self.pipeline_mode or self.env == "prod"
 
     # Intake policy
     min_adult_age: int = 18

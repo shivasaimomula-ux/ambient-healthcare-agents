@@ -78,8 +78,12 @@ With `RECOMMENDER_URL` pointing at a running Stage A (`uvicorn predictor.api:app
 every eligible intake is delivered in the background as
 `POST {RECOMMENDER_URL}/predict` with `query` plus rich `context` (`symptom_spec`, `safety`,
 `confidence_floor`). **`PIPELINE_MODE=true` (default):** `GET /ready` returns **503** when Stage A
-is unreachable — the agent will not look “ready” for the F→A path. Set `PIPELINE_MODE=false` for
-intake-only (handoffs still queue/retry; readiness ignores A). Review endpoints (header
+is unreachable — the agent will not look “ready” for the F→A path. Input guardrails also **fail
+closed**: if NemoGuard / content-safety is unavailable (timeout, empty/unparseable response), the
+turn is rejected (same deflection as an explicit block) instead of proceeding. Set
+`PIPELINE_MODE=false` for **intake-only demo** (handoffs still queue/retry; readiness ignores A;
+unavailable NemoGuard fails open so local chat still works when the hosted NIM is flaky).
+`ENV=prod` keeps fail-closed even if `PIPELINE_MODE=false`. Review endpoints (header
 `X-Admin-Token: $ADMIN_API_TOKEN`):
 
 | Endpoint | Returns |
@@ -102,7 +106,8 @@ Live tests against the real model (about 3 minutes): `HERBENZO_LIVE_TESTS=1 uv r
 
 **Measured on 2026-09-16** (16-turn chat intake, hosted NVIDIA endpoints, guardrails on):
 turn p50 **2.8 s**, p95 11.9 s; extractor p50 1.6 s; responder p50 1.4 s; input guardrail capped at its 1.5 s
-timeout and unavailable on 8 of 13 turns (it fails open by design). Voice adds ASR + TTS on top: first audio
+timeout and unavailable on 8 of 13 turns (pipeline mode now fails closed on unavailable; intake-only
+demo still fails open). Voice adds ASR + TTS on top: first audio
 3–6 s after short answers, ~13 s after a long description.
 
 ### Data retention

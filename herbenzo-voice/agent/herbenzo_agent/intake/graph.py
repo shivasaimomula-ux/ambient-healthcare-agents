@@ -19,7 +19,7 @@ from langgraph.graph import END, START, StateGraph
 
 from herbenzo_agent.audit.reproducibility import build_provenance
 from herbenzo_agent.contracts.symptom_spec import RedFlag, SpecStatus, SymptomSpec
-from herbenzo_agent.guardrails.nemoguard import Guardrails, NoopGuardrails
+from herbenzo_agent.guardrails.nemoguard import GuardStatus, Guardrails, NoopGuardrails
 from herbenzo_agent.handoff.worker import Handoff, NoopHandoff
 from herbenzo_agent.intake import scripts
 from herbenzo_agent.intake.extractor import Extractor
@@ -61,6 +61,8 @@ class IntakeDeps:
     llm_models: dict[str, str] = field(default_factory=dict)
     handoff_enabled: bool = True
     handoff_min_confidence: float = 0.5
+    # When true (pipeline/prod): NemoGuard unavailable → treat as blocked. Intake-only demo: fail open.
+    guardrails_fail_closed: bool = True
     default_language: str = "en-IN"
     default_jurisdiction: str = "IN"
     asr_model: str | None = None
@@ -199,9 +201,22 @@ def build_intake_graph(deps: IntakeDeps, checkpointer: Any = None):
                 timed_await("extractor", deps.extractor.extract(session, turn)),
             )
         count(f"guardrail_input.{guard.status.value}")
-        if guard.blocked:
-            logger.info("input blocked by %s", guard.rail)
+        unavailable = guard.status is GuardStatus.unavailable
+        fail_closed = unavailable and deps.guardrails_fail_closed
+        if guard.blocked or fail_closed:
+            if fail_closed and not guard.blocked:
+                logger.warning(
+                    "input guardrail unavailable (%s); failing closed (pipeline/prod)",
+                    guard.rail,
+                )
+            else:
+                logger.info("input blocked by %s", guard.rail)
             return {"extraction": {}, "input_blocked": True}
+        if unavailable:
+            logger.warning(
+                "input guardrail unavailable (%s); allowing message (intake-only fail-open)",
+                guard.rail,
+            )
         return {"extraction": extraction.model_dump(mode="json"), "input_blocked": False}
 
     async def plan(state: TurnState) -> TurnState:

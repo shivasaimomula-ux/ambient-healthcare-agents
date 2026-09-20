@@ -5,7 +5,8 @@ portable to the `nemoguardrails` runtime. We call the NemoGuard NIMs ourselves b
 (0.24) treats an empty model response as "blocked" (observed ~1 in 3 calls on the hosted endpoint),
 and its categories are not reliable enough to route on. Here the failure modes are explicit:
 
-- input rail unavailable  -> allow (red flags, deterministic planner and output checks still apply)
+- input rail unavailable  -> status `unavailable` (caller decides: pipeline/prod fail closed;
+  intake-only demo may fail open — see Settings.guardrails_fail_closed / IntakeDeps)
 - output rail unavailable -> the caller uses the canonical question (never speaks unchecked text)
 """
 
@@ -140,7 +141,8 @@ class NemoGuardRails:
         self.api_key = api_key
         self.timeout_s = timeout_s
         # One attempt by default: the hosted NIM is bimodal (~0.3 s or 20-40 s), so retrying a slow call only
-        # stalls the conversation. The input rail fails open and the output rail falls back to the base question.
+        # stalls the conversation. Unavailable input is policy-decided by the intake graph; output falls
+        # back to the base question.
         self.attempts = max(1, attempts)
         self.topic_control_enabled = topic_control_enabled and self.models.topic_control is not None
         self.config_sha256 = directory_sha256(config_path)
@@ -219,7 +221,7 @@ class NemoGuardRails:
         )
         result.latency_s = time.perf_counter() - started
         if result.status is GuardStatus.unavailable:
-            logger.warning("input guardrail unavailable (%s); allowing message", result.rail)
+            logger.warning("input guardrail unavailable (%s); status=unavailable", result.rail)
         return result
 
     async def check_output(self, user_text: str, bot_text: str) -> GuardResult:

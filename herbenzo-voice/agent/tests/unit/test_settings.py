@@ -8,9 +8,17 @@ def test_defaults_use_current_nvidia_model():
     assert s.llm_extractor_model == "nvidia/nemotron-3.5-lightning-30b-a3b"
     assert s.min_adult_age == 18
     assert s.pipeline_mode is True
+    assert s.guardrails_fail_closed() is True
     assert s.recommender_url == "http://localhost:8000"
     assert s.requires_chat_auth() is False
     assert s.chat_bootstrap_token is None
+
+
+def test_guardrails_fail_closed_policy():
+    assert Settings(_env_file=None, pipeline_mode=True, env="dev").guardrails_fail_closed() is True
+    assert Settings(_env_file=None, pipeline_mode=False, env="dev").guardrails_fail_closed() is False
+    # Prod stays fail-closed even if someone sets intake-only pipeline flag.
+    assert Settings(_env_file=None, pipeline_mode=False, env="prod").guardrails_fail_closed() is True
 
 
 def test_require_reports_missing_names():

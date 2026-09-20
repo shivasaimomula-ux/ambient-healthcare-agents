@@ -90,6 +90,7 @@ def default_deps(settings: Settings, store: SqliteStore) -> IntakeDeps:
         llm_models={role: role_model_id(settings, role) for role in ("extractor", "responder", "red_flag")},
         handoff_enabled=settings.handoff_enabled,
         handoff_min_confidence=settings.handoff_min_confidence,
+        guardrails_fail_closed=settings.guardrails_fail_closed(),
         default_language=settings.default_language,
         default_jurisdiction=settings.default_jurisdiction,
     )

@@ -114,6 +114,7 @@ class ReadinessChecker:
         checks["guardrails"] = {
             "ok": self.deps.guardrails.config_sha256 != "missing",
             "config_sha256": self.deps.guardrails.config_sha256,
+            "fail_closed_on_unavailable": self.deps.guardrails_fail_closed,
         }
         checks["recommender"] = await self._check_recommender()
         required = self._required_checks()
@@ -128,6 +129,7 @@ class ReadinessChecker:
             "ready": ready,
             "mode": mode,
             "pipeline_mode": self.settings.pipeline_mode,
+            "guardrails_fail_closed": self.deps.guardrails_fail_closed,
             "llm_models": self.deps.llm_models,
             "checks": checks,
         }
