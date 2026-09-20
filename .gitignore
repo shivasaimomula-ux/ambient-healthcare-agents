@@ -96,5 +96,9 @@ untitled folder/
 herbenzo-voice/**/data/
 *.db
 *.db-journal
+*.db-shm
+*.db-wal
 herbenzo-voice/voice/ui/.build/
 herbenzo-voice/voice/audio_dumps/
+.pytest_cache/
+.ruff_cache/
