@@ -9,7 +9,6 @@ import asyncio
 import logging
 import re
 import uuid
-from collections import defaultdict
 from collections.abc import Callable
 from contextlib import AsyncExitStack, asynccontextmanager
 from pathlib import Path
@@ -34,6 +33,7 @@ from herbenzo_agent.observability import StageMetrics
 from herbenzo_agent.persistence.checkpointer import open_checkpointer
 from herbenzo_agent.persistence.store import SqliteStore
 from herbenzo_agent.server.protection import (
+    SessionLockMap,
     SlidingWindowLimiter,
     client_key,
     enforce,
@@ -127,7 +127,7 @@ def create_app(
 ) -> FastAPI:
     settings = settings or get_settings()
     deps_factory = deps_factory or default_deps
-    locks: dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
+    locks = SessionLockMap(max_size=10_000, idle_ttl_s=3600.0)
     metrics = StageMetrics()
     chat_limiter = SlidingWindowLimiter(settings.rate_limit_chat_per_minute)
     new_session_limiter = SlidingWindowLimiter(settings.rate_limit_new_sessions_per_minute)

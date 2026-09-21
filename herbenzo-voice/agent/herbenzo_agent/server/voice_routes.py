@@ -7,7 +7,6 @@ identify its conversation (`session_id`), so concurrent callers never share memo
 
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
 import re
@@ -21,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from herbenzo_agent.intake.graph import SESSION_START, IntakeService
 from herbenzo_agent.observability import StageMetrics
+from herbenzo_agent.server.protection import SessionLockMap
 from herbenzo_agent.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ def stream(sentences: list[str]) -> Iterator[str]:
 def register_voice_routes(
     app: FastAPI,
     settings: Settings,
-    locks: dict[str, asyncio.Lock],
+    locks: SessionLockMap,
     valid_thread: Callable[[str], str],
     metrics: StageMetrics,
 ) -> None:
