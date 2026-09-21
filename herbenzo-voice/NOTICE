@@ -1,0 +1,16 @@
+Herbenzo Voice Agent
+Copyright (c) 2026 Herbenzo
+
+This directory contains original Herbenzo code and, where noted in individual
+file headers, code adapted from the following projects:
+
+1. NVIDIA-AI-Blueprints/ambient-patient
+   https://github.com/NVIDIA-AI-Blueprints/ambient-patient
+   Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. Apache License 2.0.
+   Used as reference for: chain server SSE response format, NeMo Guardrails
+   configuration structure, ACE Controller voice pipeline, transcript output.
+
+2. NVIDIA/ace-controller (branch develop-health, commit cf371f0670b45ac387229259e43d6d56d78546e5)
+   https://github.com/NVIDIA/ace-controller
+   Copyright (c) 2024-2025 NVIDIA CORPORATION & AFFILIATES. BSD 2-Clause License.
+   Used as dependency (nvidia-pipecat) and for the WebRTC UI.

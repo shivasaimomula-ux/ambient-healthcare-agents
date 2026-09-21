@@ -1,0 +1,38 @@
+name: herbenzo-voice
+
+on:
+  push:
+    paths: ["herbenzo-voice/**", ".github/workflows/herbenzo-voice.yaml"]
+  pull_request:
+    paths: ["herbenzo-voice/**", ".github/workflows/herbenzo-voice.yaml"]
+
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: herbenzo-voice/agent
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - name: Contract schema is up to date
+        run: |
+          uv run python -m herbenzo_agent.contracts.export_schema
+          git diff --exit-code -- ../contracts/
+      - run: uv run pytest -q
+
+  voice:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: herbenzo-voice/voice
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgl1
+      - run: uv sync --locked
+      - run: uv run ruff check . && uv run ruff format --check .
+      - run: uv run pytest -q tests

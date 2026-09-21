@@ -1,0 +1,88 @@
+# Terms the responder must never say. One regex per line (case-insensitive, matched as whole words
+# unless the pattern says otherwise). Lines starting with # are comments.
+#
+# --- advice / diagnosis language ---
+\byou should\b
+\btry (taking|using|drinking|eating)\b
+\bi (recommend|suggest|advise)\b
+\bdos(e|es|age)\b
+\b\d+\s?(mg|ml|g|mcg|gm)\b
+\bmilligrams?\b
+\bprescri\w*
+\bdiagnos\w*
+\byou (probably|might|may|likely|could) have\b
+\bsounds like (a|an|you)\b
+\bremed(y|ies)\b
+\bcure\w*
+\btreatments?\b
+\bformulation\w*\b
+\bchurna\b
+\bkashayam\b
+# --- model / prompt leakage ---
+\bnemotron\b
+\bllama\b
+\bgpt\b
+\bclaude\b
+\bgemini\b
+\bopenai\b
+\bnvidia\b
+\bmistral\b
+\blanguage model\b
+\bai model\b
+\bi'?ll output\b
+\bassistant says\b
+\bsystem prompt\b
+\btarget_question\b
+\binstructions?\b
+# --- common Ayurvedic herbs and formulations (never named by the intake agent) ---
+\bashwagandha\b
+\bturmeric\b
+\bhaldi\b
+\bharidra\b
+\btulsi\b
+\bholy basil\b
+\bneem\b
+\bgiloy\b
+\bguduchi\b
+\bbrahmi\b
+\bbacopa\b
+\bshatavari\b
+\barjuna\b
+\bshallaki\b
+\bboswellia\b
+\bmulethi\b
+\blicorice\b
+\bliquorice\b
+\bamla\b
+\btriphala\b
+\btrikatu\b
+\bsitopaladi\b
+\bavipattikar\b
+\bhingvashtak\b
+\bhingvastak\b
+\btriguna\b
+\bguggul\w*\b
+\bshilajit\b
+\bmoringa\b
+\bfenugreek\b
+\bmethi\b
+\bajwain\b
+\bfennel\b
+\bsaunf\b
+\bginger\b
+\bsonth\b
+\bcardamom\b
+\bcumin\b
+\bjeera\b
+\bpippali\b
+\blong pepper\b
+\bkutki\b
+\bpunarnava\b
+\bmanjistha\b
+\bbrihatyadi\b
+\bdashamoola\b
+\bdashmool\b
+\bkanchanar\b
+\bchyawanprash\b
+\baloe vera\b
+\bkumari\b

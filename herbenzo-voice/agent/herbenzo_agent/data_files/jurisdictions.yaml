@@ -1,0 +1,14 @@
+# Emergency contacts spoken in escalation scripts. VERIFY before any pilot in a new jurisdiction.
+# `spoken` is what TTS reads (digit by digit); `display` is for chat.
+
+IN:
+  emergency:
+    display: "112"
+    spoken: "one one two"
+  ambulance:
+    display: "108"
+    spoken: "one zero eight"
+  mental_health:
+    name: "Tele-MANAS"
+    display: "14416"
+    spoken: "one four four one six"

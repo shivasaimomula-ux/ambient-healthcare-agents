@@ -1,0 +1,26 @@
+# Riva speech on NVIDIA's hosted NVCF endpoints (verified with the project key 2026-09-16).
+Pipeline:
+  # Spoken while the agent works on a reply (hosted LLM turns take ~3-6 s). 0.0 disables.
+  # On at 0.5 to mask hosted-LLM latency: silence on ~half the turns is filled with "One moment."
+  filler_words: ["One moment."]
+  filler_probability: 0.5
+
+Agent:
+  # The responder emits a single question/sentence; 96 tokens is ample and lets the hosted
+  # LLM return (and TTS start) sooner than the old 1024-token budget.
+  max_tokens: 96
+  request_timeout_s: 45
+
+RivaASRService:
+  server: "grpc.nvcf.nvidia.com:443"
+  language: "en-US"
+  sample_rate: 16000
+  function_id: "1598d209-5e27-4d3c-8079-4751568b1081"
+  model_label: "nvidia/parakeet-ctc-1.1b-asr (NVCF)"
+
+RivaTTSService:
+  server: "grpc.nvcf.nvidia.com:443"
+  language: "en-US"
+  voice_id: "Magpie-Multilingual.EN-US.Mia"
+  function_id: "877104f7-e885-42b9-8de8-f6e4c6303969"
+  model_label: "nvidia/magpie-tts-multilingual (NVCF)"

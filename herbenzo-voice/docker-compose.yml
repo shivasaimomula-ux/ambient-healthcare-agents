@@ -1,0 +1,102 @@
+# Herbenzo voice intake stack.
+#
+#   docker compose --env-file ../.env up --build -d                    # agent + voice + web (hosted NVIDIA speech)
+#   docker compose --env-file ../.env --profile riva-nims-local up -d  # also self-hosted Riva NIMs (GPU host)
+#
+# Linux production: WebRTC media is UDP on ephemeral ports. Either run `voice` with network_mode: host, or
+# configure a TURN server (TURN_SERVER_URL/USERNAME/PASSWORD). Docker Desktop on macOS does not pass WebRTC
+# UDP reliably; on a Mac run the voice controller natively (see README).
+name: herbenzo-voice
+
+x-secrets: &secrets
+  NVIDIA_API_KEY: ${NVIDIA_API_KEY:?set NVIDIA_API_KEY in .env}
+  INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:?set INTERNAL_API_TOKEN in .env}
+
+services:
+  agent:
+    build: ./agent
+    environment:
+      <<: *secrets
+      ENV: ${ENV:-dev}
+      ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:?set ADMIN_API_TOKEN in .env}
+      CHAT_BOOTSTRAP_TOKEN: ${CHAT_BOOTSTRAP_TOKEN:-}
+      DATABASE_URL: sqlite:////data/herbenzo_voice.db
+      RECOMMENDER_URL: ${RECOMMENDER_URL:-http://host.docker.internal:8000}
+      HANDOFF_ENABLED: ${HANDOFF_ENABLED:-true}
+      PIPELINE_MODE: ${PIPELINE_MODE:-true}
+      GUARDRAILS_ENABLED: ${GUARDRAILS_ENABLED:-true}
+      GUARDRAILS_OUTPUT_ENABLED: ${GUARDRAILS_OUTPUT_ENABLED:-true}
+      CORS_ALLOW_ORIGINS: '["https://${SITE_ADDRESS:-localhost}"]'
+      LOG_CONTENT: "false"
+    volumes:
+      - agent-data:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    expose: ["8081"]
+    restart: unless-stopped
+
+  voice:
+    build: ./voice
+    environment:
+      <<: *secrets
+      AGENT_URL: http://agent:8081
+      VOICE_CONFIG_PATH: ${VOICE_CONFIG_PATH:-configs/riva_public.yaml}
+      VOICE_ALLOWED_ORIGINS: https://${SITE_ADDRESS:-localhost}
+      TURN_SERVER_URL: ${TURN_SERVER_URL:-}
+      TURN_USERNAME: ${TURN_USERNAME:-}
+      TURN_PASSWORD: ${TURN_PASSWORD:-}
+      DUMP_AUDIO_FILES: "false"
+    depends_on:
+      agent:
+        condition: service_healthy
+    expose: ["7860"]
+    restart: unless-stopped
+
+  web:
+    build: ./voice/ui
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
+      CADDY_TLS: ${CADDY_TLS:-tls internal}
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - caddy-data:/data
+    depends_on: [voice, agent]
+    restart: unless-stopped
+
+  # --- optional: self-hosted Riva NIMs (from the ambient-patient blueprint); set VOICE_CONFIG_PATH=configs/riva_self_hosted.yaml
+  riva-asr-parakeet:
+    image: nvcr.io/nim/nvidia/parakeet-1-1b-ctc-en-us:1.3.0
+    profiles: [riva-nims-local]
+    environment:
+      NGC_API_KEY: ${NGC_API_KEY:-}
+      NIM_HTTP_API_PORT: "9001"
+      NIM_GRPC_API_PORT: "50052"
+      NIM_TAGS_SELECTOR: mode=str,vad=silero
+    volumes: [nim-cache:/opt/nim/.cache]
+    deploy:
+      resources:
+        reservations:
+          devices: [{driver: nvidia, device_ids: ["${RIVA_ASR_NIM_GPU_ID:-0}"], capabilities: [gpu]}]
+    restart: unless-stopped
+
+  riva-tts-magpie:
+    image: nvcr.io/nim/nvidia/magpie-tts-multilingual:1.3.0
+    profiles: [riva-nims-local]
+    environment:
+      NGC_API_KEY: ${NGC_API_KEY:-}
+      NIM_HTTP_API_PORT: "9000"
+      NIM_GRPC_API_PORT: "50051"
+    volumes: [nim-cache:/opt/nim/.cache]
+    shm_size: 16gb
+    deploy:
+      resources:
+        reservations:
+          devices: [{driver: nvidia, device_ids: ["${RIVA_TTS_NIM_GPU_ID:-0}"], capabilities: [gpu]}]
+    restart: unless-stopped
+
+volumes:
+  agent-data:
+  caddy-data:
+  nim-cache:

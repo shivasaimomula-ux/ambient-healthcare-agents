@@ -1,0 +1,1131 @@
+{
+  "$defs": {
+    "AyurvedicContext": {
+      "additionalProperties": false,
+      "properties": {
+        "appetite": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_str_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "bowel_pattern": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_str_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "diet_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_Literal__vegetarian____non_vegetarian____vegan____eggetarian____other___"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "digestion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_str_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sleep_quality": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_str_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "stress_level": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_str_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "AyurvedicContext",
+      "type": "object"
+    },
+    "BodySystem": {
+      "enum": [
+        "digestive",
+        "respiratory",
+        "musculoskeletal",
+        "skin",
+        "sleep_mental",
+        "metabolic",
+        "womens_health",
+        "urinary",
+        "ent",
+        "general",
+        "other"
+      ],
+      "title": "BodySystem",
+      "type": "string"
+    },
+    "CaptureMode": {
+      "enum": [
+        "stated",
+        "confirmed",
+        "inferred",
+        "declined"
+      ],
+      "title": "CaptureMode",
+      "type": "string"
+    },
+    "Captured_BodySystem_": {
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "turn_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Turn Ids",
+          "type": "array"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BodySystem"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "confidence",
+        "capture",
+        "turn_ids"
+      ],
+      "title": "Captured[BodySystem]",
+      "type": "object"
+    },
+    "Captured_Duration_": {
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "turn_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Turn Ids",
+          "type": "array"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Duration"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "confidence",
+        "capture",
+        "turn_ids"
+      ],
+      "title": "Captured[Duration]",
+      "type": "object"
+    },
+    "Captured_Literal__vegetarian____non_vegetarian____vegan____eggetarian____other___": {
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "turn_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Turn Ids",
+          "type": "array"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "enum": [
+                "vegetarian",
+                "non_vegetarian",
+                "vegan",
+                "eggetarian",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "confidence",
+        "capture",
+        "turn_ids"
+      ],
+      "title": "Captured[Literal['vegetarian', 'non_vegetarian', 'vegan', 'eggetarian', 'other']]",
+      "type": "object"
+    },
+    "Captured_PregnancyStatus_": {
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "turn_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Turn Ids",
+          "type": "array"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PregnancyStatus"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "confidence",
+        "capture",
+        "turn_ids"
+      ],
+      "title": "Captured[PregnancyStatus]",
+      "type": "object"
+    },
+    "Captured_SexAtBirth_": {
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "turn_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Turn Ids",
+          "type": "array"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SexAtBirth"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "confidence",
+        "capture",
+        "turn_ids"
+      ],
+      "title": "Captured[SexAtBirth]",
+      "type": "object"
+    },
+    "Captured_bool_": {
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "turn_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Turn Ids",
+          "type": "array"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "confidence",
+        "capture",
+        "turn_ids"
+      ],
+      "title": "Captured[bool]",
+      "type": "object"
+    },
+    "Captured_int_": {
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "turn_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Turn Ids",
+          "type": "array"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "confidence",
+        "capture",
+        "turn_ids"
+      ],
+      "title": "Captured[int]",
+      "type": "object"
+    },
+    "Captured_list_Medication__": {
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "turn_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Turn Ids",
+          "type": "array"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Medication"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "confidence",
+        "capture",
+        "turn_ids"
+      ],
+      "title": "Captured[list[Medication]]",
+      "type": "object"
+    },
+    "Captured_list_str__": {
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "turn_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Turn Ids",
+          "type": "array"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "confidence",
+        "capture",
+        "turn_ids"
+      ],
+      "title": "Captured[list[str]]",
+      "type": "object"
+    },
+    "Captured_str_": {
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "turn_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Turn Ids",
+          "type": "array"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "confidence",
+        "capture",
+        "turn_ids"
+      ],
+      "title": "Captured[str]",
+      "type": "object"
+    },
+    "ChiefComplaint": {
+      "additionalProperties": false,
+      "properties": {
+        "body_system": {
+          "$ref": "#/$defs/Captured_BodySystem_"
+        },
+        "summary": {
+          "$ref": "#/$defs/Captured_str_"
+        },
+        "verbatim": {
+          "minLength": 1,
+          "title": "Verbatim",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verbatim",
+        "summary",
+        "body_system"
+      ],
+      "title": "ChiefComplaint",
+      "type": "object"
+    },
+    "Consent": {
+      "additionalProperties": false,
+      "properties": {
+        "consent_text_version": {
+          "title": "Consent Text Version",
+          "type": "string"
+        },
+        "granted": {
+          "title": "Granted",
+          "type": "boolean"
+        },
+        "granted_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Granted At"
+        },
+        "turn_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Turn Id"
+        }
+      },
+      "required": [
+        "granted",
+        "consent_text_version"
+      ],
+      "title": "Consent",
+      "type": "object"
+    },
+    "Duration": {
+      "additionalProperties": false,
+      "properties": {
+        "raw_text": {
+          "title": "Raw Text",
+          "type": "string"
+        },
+        "unit": {
+          "$ref": "#/$defs/DurationUnit"
+        },
+        "value": {
+          "exclusiveMinimum": 0,
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "raw_text"
+      ],
+      "title": "Duration",
+      "type": "object"
+    },
+    "DurationUnit": {
+      "enum": [
+        "hours",
+        "days",
+        "weeks",
+        "months",
+        "years"
+      ],
+      "title": "DurationUnit",
+      "type": "string"
+    },
+    "Medication": {
+      "additionalProperties": false,
+      "properties": {
+        "dose_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dose Text"
+        },
+        "kind": {
+          "default": "unknown",
+          "enum": [
+            "prescription",
+            "otc",
+            "herbal_or_ayurvedic",
+            "supplement",
+            "unknown"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Medication",
+      "type": "object"
+    },
+    "PregnancyStatus": {
+      "enum": [
+        "pregnant",
+        "breastfeeding",
+        "trying_to_conceive",
+        "none",
+        "unknown"
+      ],
+      "title": "PregnancyStatus",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "agent_version": {
+          "title": "Agent Version",
+          "type": "string"
+        },
+        "asr_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asr Model"
+        },
+        "graph_version": {
+          "title": "Graph Version",
+          "type": "string"
+        },
+        "guardrails_config_sha256": {
+          "title": "Guardrails Config Sha256",
+          "type": "string"
+        },
+        "llm_models": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Llm Models",
+          "type": "object"
+        },
+        "prompt_sha256": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Prompt Sha256",
+          "type": "object"
+        },
+        "transcript_ref": {
+          "title": "Transcript Ref",
+          "type": "string"
+        },
+        "tts_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tts Model"
+        }
+      },
+      "required": [
+        "agent_version",
+        "graph_version",
+        "llm_models",
+        "prompt_sha256",
+        "guardrails_config_sha256",
+        "transcript_ref"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "RedFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^RF_[A-Z_]+$",
+          "title": "Code",
+          "type": "string"
+        },
+        "evidence_turn_id": {
+          "title": "Evidence Turn Id",
+          "type": "string"
+        },
+        "matched_text": {
+          "title": "Matched Text",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "rule",
+            "model"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "source",
+        "evidence_turn_id",
+        "matched_text"
+      ],
+      "title": "RedFlag",
+      "type": "object"
+    },
+    "RedFlagScreen": {
+      "additionalProperties": false,
+      "properties": {
+        "flags": {
+          "items": {
+            "$ref": "#/$defs/RedFlag"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "outcome": {
+          "enum": [
+            "clear",
+            "escalated"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "screened_every_turn": {
+          "title": "Screened Every Turn",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "screened_every_turn",
+        "flags",
+        "outcome"
+      ],
+      "title": "RedFlagScreen",
+      "type": "object"
+    },
+    "SafetyProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "allergies": {
+          "$ref": "#/$defs/Captured_list_str__"
+        },
+        "chronic_conditions": {
+          "$ref": "#/$defs/Captured_list_str__"
+        },
+        "current_medications": {
+          "$ref": "#/$defs/Captured_list_Medication__"
+        },
+        "recent_or_planned_surgery": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_bool_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "current_medications",
+        "allergies",
+        "chronic_conditions"
+      ],
+      "title": "SafetyProfile",
+      "type": "object"
+    },
+    "SexAtBirth": {
+      "enum": [
+        "female",
+        "male",
+        "intersex",
+        "prefer_not_to_say"
+      ],
+      "title": "SexAtBirth",
+      "type": "string"
+    },
+    "SpecStatus": {
+      "enum": [
+        "complete",
+        "incomplete",
+        "escalated_red_flag",
+        "out_of_scope"
+      ],
+      "title": "SpecStatus",
+      "type": "string"
+    },
+    "Subject": {
+      "additionalProperties": false,
+      "properties": {
+        "age_years": {
+          "$ref": "#/$defs/Captured_int_"
+        },
+        "pregnancy_status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_PregnancyStatus_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sex_at_birth": {
+          "$ref": "#/$defs/Captured_SexAtBirth_"
+        }
+      },
+      "required": [
+        "age_years",
+        "sex_at_birth"
+      ],
+      "title": "Subject",
+      "type": "object"
+    },
+    "SymptomDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "aggravating_factors": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_list_str__"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "associated_symptoms": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_list_str__"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "character": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_str_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "duration": {
+          "$ref": "#/$defs/Captured_Duration_"
+        },
+        "frequency_pattern": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_str_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_str_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "$ref": "#/$defs/Captured_str_"
+        },
+        "relieving_factors": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_list_str__"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "severity_0_10": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Captured_int_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name",
+        "duration"
+      ],
+      "title": "SymptomDetail",
+      "type": "object"
+    }
+  },
+  "$id": "https://herbenzo.com/contracts/symptom_spec/1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "ayurvedic_context": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AyurvedicContext"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "channel": {
+      "enum": [
+        "voice",
+        "chat"
+      ],
+      "title": "Channel",
+      "type": "string"
+    },
+    "chief_complaint": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ChiefComplaint"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "confidence_floor": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence Floor",
+      "type": "number"
+    },
+    "consent": {
+      "$ref": "#/$defs/Consent"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "jurisdiction": {
+      "default": "IN",
+      "pattern": "^[A-Z]{2}$",
+      "title": "Jurisdiction",
+      "type": "string"
+    },
+    "language": {
+      "default": "en-IN",
+      "title": "Language",
+      "type": "string"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "red_flag_screen": {
+      "$ref": "#/$defs/RedFlagScreen"
+    },
+    "reporter_role": {
+      "enum": [
+        "self",
+        "caregiver",
+        "practitioner"
+      ],
+      "title": "Reporter Role",
+      "type": "string"
+    },
+    "safety_profile": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SafetyProfile"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "session_id": {
+      "minLength": 1,
+      "title": "Session Id",
+      "type": "string"
+    },
+    "spec_id": {
+      "format": "uuid",
+      "title": "Spec Id",
+      "type": "string"
+    },
+    "spec_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Spec Version",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/SpecStatus"
+    },
+    "status_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Status Reason"
+    },
+    "subject": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Subject"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "symptoms": {
+      "items": {
+        "$ref": "#/$defs/SymptomDetail"
+      },
+      "title": "Symptoms",
+      "type": "array"
+    }
+  },
+  "required": [
+    "session_id",
+    "status",
+    "channel",
+    "reporter_role",
+    "consent",
+    "red_flag_screen",
+    "confidence_floor",
+    "provenance"
+  ],
+  "title": "SymptomSpec",
+  "type": "object",
+  "x-spec-version": "1.0.0"
+}

@@ -1,0 +1,46 @@
+{
+  "spec_version": "1.0.0",
+  "spec_id": "5b0f6c1e-8c3f-4f6e-9a55-2f0d1f1a9c02",
+  "session_id": "sess-fixture-escalated",
+  "status": "escalated_red_flag",
+  "status_reason": "RF_CHEST_PAIN",
+  "created_at": "2026-09-16T10:05:00Z",
+  "channel": "voice",
+  "language": "en-IN",
+  "jurisdiction": "IN",
+  "reporter_role": "self",
+  "consent": {
+    "granted": true,
+    "consent_text_version": "consent-en-2026-09-v1",
+    "granted_at": "2026-09-16T10:04:10Z",
+    "turn_id": "sess-fixture-escalated:1"
+  },
+  "red_flag_screen": {
+    "screened_every_turn": true,
+    "flags": [
+      {
+        "code": "RF_CHEST_PAIN",
+        "source": "rule",
+        "evidence_turn_id": "sess-fixture-escalated:3",
+        "matched_text": "chest pain going down my left arm"
+      }
+    ],
+    "outcome": "escalated"
+  },
+  "subject": null,
+  "chief_complaint": null,
+  "symptoms": [],
+  "safety_profile": null,
+  "ayurvedic_context": null,
+  "confidence_floor": 0.0,
+  "provenance": {
+    "agent_version": "0.1.0",
+    "graph_version": "fixture",
+    "llm_models": {"extractor": "nvidia/nemotron-3.5-lightning-30b-a3b"},
+    "prompt_sha256": {"scripts": "fixture"},
+    "guardrails_config_sha256": "fixture",
+    "asr_model": "parakeet-ctc-1.1b-en-US",
+    "tts_model": "magpie-tts-multilingual",
+    "transcript_ref": "turns:sess-fixture-escalated"
+  }
+}

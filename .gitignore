@@ -42,10 +42,15 @@ ipython_config.py
 # pyenv
 .python-version
 
-# Environments
+# Environments / secrets (Task T24 / Audit #23)
 .env
+.env.*
+.env.txt
+!.env.example
 .env.local
 .env.*.local
+*.pem
+*.key
 
 # IDE
 .vscode/
@@ -88,3 +93,17 @@ docker-compose.override.yml
 Thumbs.db
 .DS_Store
 
+
+# Herbenzo: never commit secrets or local data
+.env.rtf
+*.rtf
+untitled folder/
+herbenzo-voice/**/data/
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+herbenzo-voice/voice/ui/.build/
+herbenzo-voice/voice/audio_dumps/
+.pytest_cache/
+.ruff_cache/

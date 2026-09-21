@@ -1,0 +1,101 @@
+# Red-flag lexicon v1 — emergencies that end the intake and trigger the escalation script.
+# DRAFT: must be reviewed by a clinician before any external pilot (DECISIONS.md, open decision 5).
+#
+# Patterns are case-insensitive Python regexes matched against one user turn.
+# negation_aware: a match is ignored when a negation cue ("no", "not", "never", "without",
+# "don't", "denies", ...) appears within 3 words before it. Self-harm is deliberately NOT
+# negation-aware: "I'm not suicidal" escalating is an acceptable false positive.
+
+version: "2026-09-16.1"
+
+model_trigger_keywords:
+  - pain
+  - bleed
+  - blood
+  - breath
+  - chest
+  - faint
+  - dizz
+  - numb
+  - weak
+  - swell
+  - fever
+  - pregnan
+  - vomit
+  - confus
+  - hopeless
+  - depress
+  - worthless
+  - die
+  - collapse
+
+flags:
+  RF_CHEST_PAIN:
+    negation_aware: true
+    patterns:
+      - '\bchest\s+(pain|pressure|tightness|heaviness|discomfort)\b'
+      - '\b(pain|ache|pressure)\b[^.?!]{0,40}\b(left\s+arm|jaw)\b'
+      - '\bcrushing\b[^.?!]{0,20}\bchest\b'
+      - '\bheart\s+attack\b'
+  RF_BREATHING:
+    negation_aware: true
+    patterns:
+      - "\\b(can'?t|cannot|can not|unable\\s+to|struggling\\s+to|hard\\s+to)\\s+breathe\\b"
+      - '\b(severe|extreme|sudden)\s+(breathlessness|shortness\s+of\s+breath)\b'
+      - '\blips?\s+(are\s+|is\s+)?(turning\s+)?blue\b'
+      - '\bgasping\b'
+  RF_STROKE:
+    negation_aware: true
+    patterns:
+      - '\bface\s+(is\s+)?(drooping|droops|drooped)\b'
+      - '\bslurred\s+speech\b|\bspeech\s+(is\s+)?slurred\b'
+      - '\b(weakness|numbness)\s+(on|in|down)\s+(one|the\s+left|the\s+right)\s+side\b'
+      - '\bstroke\b'
+  RF_SEVERE_BLEEDING:
+    negation_aware: true
+    patterns:
+      - '\b(vomiting|throwing\s+up|coughing\s+up)\s+blood\b'
+      - '\bblack,?\s+(tarry|sticky)\s+stools?\b|\btarry\s+stools?\b'
+      - "\\b(heavy|uncontrolled)\\s+bleeding\\b|\\bbleeding\\s+(heavily|(that\\s+)?won'?t\\s+stop)\\b"
+      - '\bblood\s+in\s+(my\s+)?(stool|stools|poo|vomit)\b'
+  RF_SELF_HARM:
+    negation_aware: false
+    patterns:
+      - '\b(kill|hurt|harm)\s+myself\b'
+      - '\bsuicid(e|al)\b'
+      - '\bend\s+(my\s+life|it\s+all)\b'
+      - '\bself[-\s]?harm\b'
+      - "\\bdon'?t\\s+want\\s+to\\s+(live|be\\s+alive)\\b"
+      - '\bwant\s+to\s+die\b'
+  RF_ANAPHYLAXIS:
+    negation_aware: true
+    patterns:
+      - '\b(throat|tongue|lips?)\s+(is\s+|are\s+)?(swelling|swollen|closing)\b'
+      - '\banaphyla\w*'
+  RF_UNCONSCIOUS_SEIZURE:
+    negation_aware: true
+    patterns:
+      - '\b(passed\s+out|fainted|unconscious|blacked\s+out|collapsed)\b'
+      - '\b(seizure|seizures|convulsion|convulsions)\b'
+      - '\b(having|had)\s+(a\s+)?fits?\b'
+  RF_SEVERE_ABDOMINAL:
+    negation_aware: true
+    patterns:
+      - '\b(worst|unbearable|excruciating)\s+(stomach|abdominal|belly|tummy)\s+pain\b'
+      - '\b(rigid|hard\s+as\s+a\s+board)\s+(stomach|abdomen|belly)\b'
+      - '\b(stomach|abdomen|belly|tummy)\s+(is\s+|feels\s+|has\s+gone\s+)?(rigid|hard\s+as\s+a\s+board)\b'
+  RF_HIGH_FEVER_STIFF_NECK:
+    negation_aware: true
+    patterns:
+      - '\bstiff\s+neck\b[^.?!]{0,60}\bfever\b'
+      - '\bfever\b[^.?!]{0,60}\bstiff\s+neck\b'
+  RF_PREGNANCY_BLEEDING:
+    negation_aware: true
+    patterns:
+      - '\bpregnan\w*\b[^.?!]{0,60}\b(bleeding|severe\s+pain)\b'
+      - '\b(bleeding|severe\s+pain)\b[^.?!]{0,60}\bpregnan\w*\b'
+  RF_POISONING_OVERDOSE:
+    negation_aware: true
+    patterns:
+      - '\b(overdose|overdosed|poisoned|swallowed\s+poison)\b'
+      - '\btook\s+too\s+many\s+(pills|tablets|medicines)\b'

@@ -1,0 +1,30 @@
+# Herbenzo intake guardrails (adapted from NVIDIA ambient-patient `patient-intake-nemoguard`, Apache-2.0).
+#
+# Order in the intake graph: red-flag screen -> THESE INPUT RAILS -> extraction.
+# Emergencies (including self-harm) are handled before this config ever sees the message.
+# Medical advice / diagnosis requests are NOT blocked here: they are normal intake behaviour and are
+# deflected deterministically by the planner. These rails catch abuse, harmful intent, manipulation,
+# other people's data, and off-topic use.
+#
+# base_url values are overridden at load time from GUARDRAILS_BASE_URL (public NIM or self-hosted).
+
+models:
+  - type: content_safety
+    engine: nim
+    model: nvidia/llama-3.1-nemoguard-8b-content-safety
+    parameters:
+      base_url: https://integrate.api.nvidia.com/v1
+  - type: topic_control
+    engine: nim
+    model: nvidia/llama-3.1-nemoguard-8b-topic-control
+    parameters:
+      base_url: https://integrate.api.nvidia.com/v1
+
+rails:
+  input:
+    flows:
+      - content safety check input $model=content_safety
+      - topic safety check input $model=topic_control
+  output:
+    flows:
+      - content safety check output $model=content_safety
