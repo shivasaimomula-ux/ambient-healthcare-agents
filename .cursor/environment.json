@@ -1,0 +1,11 @@
+{
+  "name": "Ambient Healthcare Agents",
+  "install": "bash .cursor/install.sh",
+  "terminals": [
+    {
+      "name": "jupyterlab",
+      "command": "python3 -m jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --ServerApp.token='' --ServerApp.password='' --ServerApp.allow_origin='*'"
+    }
+  ],
+  "ports": [8888]
+}
