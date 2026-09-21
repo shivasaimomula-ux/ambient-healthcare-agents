@@ -42,10 +42,15 @@ ipython_config.py
 # pyenv
 .python-version
 
-# Environments
+# Environments / secrets (Task T24 / Audit #23)
 .env
+.env.*
+.env.txt
+!.env.example
 .env.local
 .env.*.local
+*.pem
+*.key
 
 # IDE
 .vscode/
