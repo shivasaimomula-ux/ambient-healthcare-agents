@@ -39,14 +39,22 @@ def build_query(spec: SymptomSpec) -> str:
 def to_predict_request(spec: SymptomSpec) -> dict[str, Any]:
     subject, safety = spec.subject, spec.safety_profile
     medications = _value(safety.current_medications) if safety else None
+    spec_id = str(spec.spec_id)
+    # Task T22 — start the run-thread with F's spec_id (operators see it on A/F meta).
+    provenance_thread = {
+        "schema_version": "1.0.0",
+        "spec_id": spec_id,
+        "stages": ["F"],
+    }
     return {
         "query": build_query(spec),
         "context": {
             "source": "herbenzo-stage-f",
-            "spec_id": str(spec.spec_id),
+            "spec_id": spec_id,
             "spec_version": spec.spec_version,
             "confidence_floor": spec.confidence_floor,
             "jurisdiction": spec.jurisdiction,
+            "provenance_thread": provenance_thread,
             "safety": {
                 "age_years": _value(subject.age_years) if subject else None,
                 "sex_at_birth": _value(subject.sex_at_birth) if subject else None,

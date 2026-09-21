@@ -101,6 +101,8 @@ def test_predict_request_from_complete_spec():
     assert request["query"] == "burning acidity, for 3 weeks, after meals, worse with spicy food"
     ctx = request["context"]
     assert ctx["confidence_floor"] == 0.95 and ctx["spec_id"] == str(spec.spec_id)
+    assert ctx["provenance_thread"]["spec_id"] == str(spec.spec_id)
+    assert "F" in ctx["provenance_thread"]["stages"]
     assert ctx["safety"]["age_years"] == 34 and ctx["safety"]["pregnancy_status"] is None
     assert ctx["safety"]["current_medications"][0]["name"] == "pantoprazole"
     assert ctx["safety"]["allergies"] == []
