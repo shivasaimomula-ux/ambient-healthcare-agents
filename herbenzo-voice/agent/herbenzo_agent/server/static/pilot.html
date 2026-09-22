@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Herbenzo · Stage F pilot strip</title>
+  <style>
+    :root { --bg:#f4f6f5; --ink:#1c2a24; --muted:#5f6f67; --line:#d5ddd8; --ok:#15803d; --warn:#b45309; }
+    body { margin:0; font-family: ui-sans-serif, system-ui, sans-serif; background:var(--bg); color:var(--ink); }
+    main { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+    h1 { font-size: 1.25rem; margin: 0 0 .25rem; }
+    .sub { color: var(--muted); font-size: .9rem; margin: 0 0 1rem; }
+    .strip { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem;
+      border: 1px dashed var(--line); border-radius: 10px; padding: .75rem .9rem; background: #fff; white-space: pre-wrap; }
+    .ok { color: var(--ok); font-weight: 700; } .no { color: var(--warn); font-weight: 700; }
+    button { margin-top: .75rem; padding: .55rem 1rem; border:0; border-radius:8px; background:#0d7a6e; color:#fff; font-weight:600; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Stage F · Handoff readiness</h1>
+    <p class="sub">Thin pilot strip (N4.1). Voice/chat UIs stay independent — this page only shows <code>/ready</code> + handoff eligibility for demos.</p>
+    <div id="strip" class="strip" role="status">Loading /ready…</div>
+    <button type="button" id="refresh">Refresh</button>
+  </main>
+  <script>
+    async function load() {
+      const el = document.getElementById('strip');
+      try {
+        const r = await fetch('/ready');
+        const j = await r.json();
+        const checks = j.checks || {};
+        const rec = checks.recommender || {};
+        const handoffOk = rec.ok === true;
+        const readyCls = j.ready ? 'ok' : 'no';
+        const aCls = handoffOk ? 'ok' : 'no';
+        el.innerHTML =
+          `Handoff · <span class="${readyCls}">F ready=${j.ready}</span>` +
+          ` · mode=${j.mode || '?'}` +
+          ` · <span class="${aCls}">→A ${handoffOk ? 'reachable' : 'down'}</span>` +
+          `\nProvenance: starts on SymptomSpec handoff (spec_id → stages=[F])` +
+          `\nrecommender: ${rec.detail || rec.url || '—'}` +
+          `\nHTTP ${r.status}`;
+      } catch (e) {
+        el.textContent = 'Error: ' + e + ' — is the F agent on :8081?';
+      }
+    }
+    document.getElementById('refresh').onclick = load;
+    load();
+  </script>
+</body>
+</html>
