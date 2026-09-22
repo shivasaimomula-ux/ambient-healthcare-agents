@@ -16,6 +16,7 @@ from pathlib import Path
 import bleach
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from herbenzo_agent import __version__
@@ -119,6 +120,12 @@ class ChatResponse(BaseModel):
     phase: str
     final_status: str | None
     spec_ids: list[str]
+    # N4.1 thin handoff metadata for pilot UIs / curl demos (not a mega-dashboard).
+    handoff_ready: bool | None = None
+    provenance_strip: str | None = None
+
+
+AGENT_STATIC = Path(__file__).resolve().parent / "static"
 
 
 def create_app(
@@ -207,6 +214,15 @@ def create_app(
 
     register_voice_routes(app, settings, locks, valid_thread, metrics)
 
+    @app.get("/ui/pilot")
+    @app.get("/ui/pilot.html")
+    async def pilot_strip() -> FileResponse:
+        """N4.1 thin handoff readiness page (federated; not a mega-dashboard)."""
+        path = AGENT_STATIC / "pilot.html"
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail="pilot strip missing")
+        return FileResponse(path)
+
     @app.get("/health")
     async def health() -> dict:
         return {"status": "ok", "version": __version__}
@@ -255,6 +271,11 @@ def create_app(
             result.phase,
             result.timings.get("turn_total", 0.0),
         )
+        handoff_ready = bool(result.spec_ids) and result.final_status is not None
+        prov = None
+        if result.spec_ids:
+            sid = result.spec_ids[0]
+            prov = f"spec_id={sid} · stages=[F] · final_status={result.final_status.value if result.final_status else None}"
         return ChatResponse(
             session_id=thread_id,
             thread_id=thread_id,
@@ -263,6 +284,8 @@ def create_app(
             phase=result.phase,
             final_status=result.final_status.value if result.final_status else None,
             spec_ids=result.spec_ids,
+            handoff_ready=handoff_ready,
+            provenance_strip=prov,
         )
 
     @app.get("/v1/sessions/{thread_id}", dependencies=[Depends(require_admin)])
